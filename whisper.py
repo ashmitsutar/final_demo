@@ -1,12 +1,12 @@
 from faster_whisper import WhisperModel
+import torch
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
 model = WhisperModel(
-    "medium",
-    device="cpu",        # change to "cuda" if you have GPU
-    compute_type="int8"  # use "float16" if GPU
+    "large",
+    device=device,
+    compute_type="int8"
 )
 
-segments, info = model.transcribe("audio.wav")
-print("text is -> ")
-for segment in segments:
-    print( segment.text)
+

@@ -1,29 +1,487 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>AI Research Assistant</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <title>AI Research Assistant | Future of Academic Study</title>
+    <link rel="stylesheet" href="/static/style.css?v=3">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI Research Assistant — upload any academic paper and get instant AI-powered explanations, voice navigation, and head-tracking for hands-free access.">
 </head>
 <body>
 
 <div class="app">
 
-    <div class="sidebar">
+    <div class="navbar">
         <h2 class="logo">AI Research</h2>
-        <a href="/"><button>Home</button></a>
-        <a href="/study"><button>Study</button></a>
-        <a href="/papers"><button>Papers</button></a>
+        <div class="nav-links">
+            <button id="hf-toggle" onclick="toggleHandsFree()" class="hf-btn off">Hands-Free: OFF</button>
+            <a href="/"><button class="active">Home</button></a>
+            <a href="/study"><button>Study</button></a>
+            <a href="/papers"><button>Library</button></a>
+            <a href="/saved"><button>Saved</button></a>
+            <a href="/commands"><button>Commands</button></a>
+            <a href="/trending"><button>Trending</button></a>
+            <button id="gaze-toggle" onclick="toggleGaze()" class="hf-btn off gaze-btn">Gaze: OFF</button>
+        </div>
+        <div id="voice-status-container" class="voice-status-container">
+            <div id="voice-indicator" class="voice-indicator"></div>
+            <span id="voice-status-text" class="voice-status-text">OFFLINE</span>
+        </div>
     </div>
 
-    <div class="main">
-        <h1>AI Research Assistant</h1>
+    <div class="main hero">
 
-        <p class="desc">
-            Upload research papers, understand them easily, and interact with AI.
+        <!-- ── BADGE ── -->
+        <div class="hero-badge anim-1">🔬 Accessible AI for Academic Research</div>
+
+        <!-- ── HEADLINE ── -->
+        <h1 class="anim-2">Research. Understand.<br><span class="hero-accent">Instantly.</span></h1>
+
+        <!-- ── DESCRIPTION ── -->
+        <p class="desc anim-3">
+            A fully <strong>hands-free</strong> AI research assistant built for everyone — including blind and motor-impaired users.
+            Upload any academic paper (PDF) and have an intelligent AI tutor walk you through every equation, methodology, and conclusion using
+            <strong>voice control</strong>, <strong>head-tracking gaze</strong>, and natural language chat.
         </p>
+
+        <!-- ── CTA BUTTONS ── -->
+        <div class="cta-group anim-4">
+            <a href="/study"><button class="primary-btn-large btn-glow">Start Studying →</button></a>
+            <a href="/commands"><button class="secondary-btn-large">Voice Commands</button></a>
+        </div>
+
+        <!-- ── STATS ROW ── -->
+        <div class="stats-row anim-5">
+            <div class="stat-item">
+                <span class="stat-num">100%</span>
+                <span class="stat-label">Hands-Free</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-num">0</span>
+                <span class="stat-label">Calibration</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-num">RAG</span>
+                <span class="stat-label">AI Engine</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-num">∞</span>
+                <span class="stat-label">Papers</span>
+            </div>
+        </div>
+
+        <!-- ── HOW IT WORKS ── -->
+        <div class="how-section anim-6">
+            <h2 class="how-title">How It Works</h2>
+            <div class="how-steps">
+                <div class="how-step hs-1">
+                    <div class="step-num">1</div>
+                    <div class="step-text">
+                        <strong>Upload</strong> any research paper PDF or import directly from Semantic Scholar.
+                    </div>
+                </div>
+                <div class="how-arrow">→</div>
+                <div class="how-step hs-2">
+                    <div class="step-num">2</div>
+                    <div class="step-text">
+                        <strong>Ask</strong> questions in text or by voice. Say <em>"Hey assistant, ask what is attention?"</em>
+                    </div>
+                </div>
+                <div class="how-arrow">→</div>
+                <div class="how-step hs-3">
+                    <div class="step-num">3</div>
+                    <div class="step-text">
+                        <strong>Listen</strong> as the AI reads its answer aloud — fully accessible, no screen needed.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── FEATURE CARDS ── -->
+        <div class="features-grid">
+            <div class="feature-card glass-card fc-1">
+                <div class="icon-box">📄</div>
+                <h3>PDF Study Environment</h3>
+                <p>Side-by-side PDF viewer and AI chat. Ask anything about the paper — the AI reads, understands, and explains with full academic context.</p>
+            </div>
+            <div class="feature-card glass-card fc-2">
+                <div class="icon-box">🎙️</div>
+                <h3>Voice &amp; Wake Word</h3>
+                <p>Always-on microphone listens for <em>"Hey Assistant"</em>. Navigate pages, open papers, and chat entirely hands-free — designed for blind users.</p>
+            </div>
+            <div class="feature-card glass-card fc-3">
+                <div class="icon-box">👁️</div>
+                <h3>Head-Tracking Gaze</h3>
+                <p>MediaPipe FaceMesh turns your head into a mouse pointer. Blink to click. Dwell at the bottom to scroll. Zero calibration needed.</p>
+            </div>
+            <div class="feature-card glass-card fc-4">
+                <div class="icon-box">📚</div>
+                <h3>Personal Library</h3>
+                <p>Upload, organise, and revisit your papers. Resume any previous discussion thread right where you left off — context is always saved.</p>
+            </div>
+            <div class="feature-card glass-card fc-5">
+                <div class="icon-box">🔥</div>
+                <h3>Trending Research</h3>
+                <p>Search the latest papers from Semantic Scholar by topic. Link any paper directly into your study environment with one click.</p>
+            </div>
+            <div class="feature-card glass-card fc-6">
+                <div class="icon-box">🧠</div>
+                <h3>RAG-Powered AI</h3>
+                <p>Retrieval-Augmented Generation grounds every answer in your document — not generic internet knowledge. Academic-precise, always cited.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ── BLURRED BACKGROUND WAVES ── -->
+    <div class="waves-container">
+        <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+        viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+            <defs>
+                <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+            </defs>
+            <g class="parallax">
+                <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(59, 130, 246, 0.15)" />
+                <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(6, 182, 212, 0.15)" />
+                <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(99, 102, 241, 0.15)" />
+                <use xlink:href="#gentle-wave" x="48" y="7" fill="rgba(14, 165, 233, 0.2)" />
+            </g>
+        </svg>
     </div>
 
 </div>
+
+<script src="/static/script.js"></script>
+<script src="/static/wave.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+<script src="/static/gaze.js?v=8"></script>
+
+<style>
+/* ════════════════════════════════════════════════════════════════════════
+   HOMEPAGE PREMIUM ANIMATIONS
+════════════════════════════════════════════════════════════════════════ */
+
+/* ── Staggered Entrance Animations ─────────────────────────────────── */
+@keyframes slideUp {
+    from { opacity:0; transform: translateY(40px); }
+    to   { opacity:1; transform: translateY(0);    }
+}
+@keyframes slideDown {
+    from { opacity:0; transform: translateY(-20px); }
+    to   { opacity:1; transform: translateY(0);     }
+}
+@keyframes fadeScale {
+    from { opacity:0; transform: scale(0.92); }
+    to   { opacity:1; transform: scale(1);    }
+}
+
+.anim-1 { animation: slideDown 0.7s cubic-bezier(0.16,1,0.3,1) both; animation-delay: 0.05s; }
+.anim-2 { animation: slideUp  0.9s cubic-bezier(0.16,1,0.3,1) both; animation-delay: 0.15s; }
+.anim-3 { animation: slideUp  0.9s cubic-bezier(0.16,1,0.3,1) both; animation-delay: 0.3s;  }
+.anim-4 { animation: slideUp  0.9s cubic-bezier(0.16,1,0.3,1) both; animation-delay: 0.45s; }
+.anim-5 { animation: fadeScale 0.8s cubic-bezier(0.16,1,0.3,1) both; animation-delay: 0.6s; }
+.anim-6 { animation: slideUp  0.9s cubic-bezier(0.16,1,0.3,1) both; animation-delay: 0.75s; }
+
+/* Feature cards stagger */
+.fc-1,.fc-2,.fc-3,.fc-4,.fc-5,.fc-6 {
+    animation: slideUp 0.8s cubic-bezier(0.16,1,0.3,1) both;
+}
+.fc-1 { animation-delay: 0.9s;  }
+.fc-2 { animation-delay: 1.0s;  }
+.fc-3 { animation-delay: 1.1s;  }
+.fc-4 { animation-delay: 1.2s;  }
+.fc-5 { animation-delay: 1.3s;  }
+.fc-6 { animation-delay: 1.4s;  }
+
+/* How-step stagger */
+.hs-1 { animation: fadeScale 0.8s cubic-bezier(0.16,1,0.3,1) 0.85s both; }
+.hs-2 { animation: fadeScale 0.8s cubic-bezier(0.16,1,0.3,1) 0.95s both; }
+.hs-3 { animation: fadeScale 0.8s cubic-bezier(0.16,1,0.3,1) 1.05s both; }
+
+/* ── Badge ─────────────────────────────────────────────────────────── */
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(99,102,241,0.10);
+    border: 1px solid rgba(99,102,241,0.30);
+    color: #6366f1;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 7px 20px;
+    border-radius: 100px;
+    margin-bottom: 28px;
+    letter-spacing: 0.04em;
+    box-shadow: 0 0 24px rgba(99,102,241,0.12);
+}
+
+/* ── Headline – animated gradient ──────────────────────────────────── */
+@keyframes gradientShift {
+    0%   { background-position: 0%   50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0%   50%; }
+}
+.hero-accent {
+    display: inline-block;
+    background: linear-gradient(135deg, #6366f1, #3b82f6, #06b6d4, #6366f1);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientShift 4s ease infinite;
+}
+
+/* ── CTA Glow Button ───────────────────────────────────────────────── */
+@keyframes glowPulse {
+    0%,100% { box-shadow: 0 10px 30px rgba(99,102,241,0.25), 0 0 0 0 rgba(99,102,241,0.2); }
+    50%      { box-shadow: 0 14px 40px rgba(99,102,241,0.45), 0 0 0 8px rgba(99,102,241,0); }
+}
+.btn-glow {
+    background: linear-gradient(135deg, #6366f1 0%, #3b82f6 100%) !important;
+    animation: glowPulse 2.8s ease-in-out infinite;
+    border: none !important;
+}
+.btn-glow:hover {
+    transform: translateY(-4px) scale(1.03) !important;
+    box-shadow: 0 20px 50px rgba(99,102,241,0.55) !important;
+}
+
+.cta-group {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 48px;
+}
+
+.secondary-btn-large {
+    background: rgba(255,255,255,0.6);
+    backdrop-filter: blur(12px);
+    color: var(--primary);
+    padding: 18px 42px;
+    border-radius: 16px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border: 1.5px solid rgba(99,102,241,0.2);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.secondary-btn-large:hover {
+    background: rgba(99,102,241,0.06);
+    border-color: #6366f1;
+    color: #6366f1;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(99,102,241,0.15);
+}
+
+/* ── Stats Row ─────────────────────────────────────────────────────── */
+.stats-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    background: rgba(255,255,255,0.65);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.7);
+    border-radius: 20px;
+    padding: 20px 40px;
+    margin-bottom: 64px;
+    box-shadow: 0 4px 30px rgba(99,102,241,0.08);
+    width: fit-content;
+}
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 32px;
+}
+.stat-num {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.9rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #6366f1, #3b82f6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1.1;
+}
+.stat-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 4px;
+}
+.stat-divider {
+    width: 1px;
+    height: 40px;
+    background: rgba(0,0,0,0.08);
+}
+
+/* ── How It Works ──────────────────────────────────────────────────── */
+.how-section {
+    width: 100%;
+    margin-bottom: 64px;
+    text-align: center;
+}
+.how-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 32px;
+    color: var(--primary);
+    letter-spacing: -0.01em;
+}
+.how-steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+.how-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: rgba(255,255,255,0.75);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.8);
+    border-radius: 20px;
+    padding: 22px 24px;
+    max-width: 250px;
+    text-align: left;
+    box-shadow: 0 6px 24px rgba(99,102,241,0.07);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.how-step:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 40px rgba(99,102,241,0.14);
+}
+.step-num {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6366f1, #3b82f6);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.95rem;
+    font-family: 'Outfit', sans-serif;
+    box-shadow: 0 4px 12px rgba(99,102,241,0.35);
+}
+.step-text {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+}
+.step-text strong { color: var(--primary); }
+.how-arrow {
+    font-size: 1.6rem;
+    color: #c7d2fe;
+    flex-shrink: 0;
+    margin-top: 4px;
+}
+
+/* ── Feature Cards ─────────────────────────────────────────────────── */
+.features-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 24px !important;
+}
+.feature-card {
+    transition: transform 0.35s cubic-bezier(0.16,1,0.3,1),
+                box-shadow 0.35s ease,
+                border-color 0.3s ease !important;
+    position: relative;
+    overflow: hidden;
+}
+/* Shimmer on hover */
+.feature-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(99,102,241,0.06) 0%, rgba(6,182,212,0.04) 100%);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    border-radius: inherit;
+}
+.feature-card:hover::before { opacity: 1; }
+.feature-card:hover {
+    transform: translateY(-12px) !important;
+    box-shadow: 0 24px 48px rgba(99,102,241,0.12) !important;
+    border-color: rgba(99,102,241,0.25) !important;
+}
+
+/* Icon box – coloured ring on hover */
+.feature-card .icon-box {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.feature-card:hover .icon-box {
+    transform: scale(1.15) rotate(-4deg);
+    box-shadow: 0 0 20px rgba(99,102,241,0.25);
+    background: rgba(99,102,241,0.12);
+}
+
+/* ── Floating particles (decorative) ─────────────────────────────── */
+@keyframes floatUp {
+    0%   { transform: translateY(0) scale(1);   opacity: 0; }
+    10%  { opacity: 0.6; }
+    90%  { opacity: 0.2; }
+    100% { transform: translateY(-120px) scale(0.5); opacity: 0; }
+}
+.particle {
+    position: fixed;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #a5b4fc, transparent);
+    pointer-events: none;
+    z-index: 0;
+    animation: floatUp linear infinite;
+}
+
+/* ── Responsive ───────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+    .features-grid { grid-template-columns: 1fr 1fr !important; }
+    .how-arrow { display: none; }
+    .stats-row { padding: 16px 20px; }
+    .stat-item { padding: 0 18px; }
+}
+@media (max-width: 600px) {
+    .features-grid { grid-template-columns: 1fr !important; }
+    .stats-row { flex-wrap: wrap; gap: 16px; padding: 20px; }
+    .stat-divider { display: none; }
+}
+</style>
+
+<script>
+/* ── Spawn floating particles in the background ──────────────────── */
+(function spawnParticles() {
+    const colours = ['#a5b4fc','#7dd3fc','#c4b5fd','#bae6fd','#e0e7ff'];
+    function spawn() {
+        const el = document.createElement('div');
+        el.className = 'particle';
+        el.style.left   = Math.random() * 100 + 'vw';
+        el.style.bottom = '-10px';
+        const size = 3 + Math.random() * 5;
+        el.style.width  = size + 'px';
+        el.style.height = size + 'px';
+        el.style.background = colours[Math.floor(Math.random() * colours.length)];
+        el.style.animationDuration  = (8 + Math.random() * 14) + 's';
+        el.style.animationDelay     = (Math.random() * 6) + 's';
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 22000);
+    }
+    setInterval(spawn, 1200);
+    for (let i = 0; i < 6; i++) setTimeout(spawn, i * 400);
+})();
+</script>
 
 </body>
 </html>

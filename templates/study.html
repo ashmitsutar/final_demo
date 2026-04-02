@@ -1,57 +1,290 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Study</title>
-    <link rel="stylesheet" href="/static/style.css">
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
-
-    <script>
-        const pdfjsLib = window['pdfjs-dist/build/pdf'];
-    </script>
+    <title>AI Study Environment | Research Assistant</title>
+    <link rel="stylesheet" href="/static/style.css?v=2">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-
 <body>
 
 <div class="app">
-
-    <div class="sidebar">
-        <h2>AI Research</h2>
-        <a href="/"><button>Home</button></a>
-        <a href="/study"><button>Study</button></a>
-        <a href="/papers"><button>Papers</button></a>
+    
+    <div class="navbar">
+        <h2 class="logo">AI Research</h2>
+        <div class="nav-links">
+            <button id="hf-toggle" onclick="toggleHandsFree()" class="hf-btn off">Hands-Free: OFF</button>
+            <a href="/"><button>Home</button></a>
+            <a href="/study"><button class="active">Study</button></a>
+            <a href="/papers"><button>Library</button></a>
+            <a href="/saved"><button>Saved</button></a>
+            <a href="/commands"><button>Commands</button></a>
+            <a href="/trending"><button>Trending</button></a>
+            <button id="gaze-toggle" onclick="toggleGaze()" class="hf-btn off gaze-btn">Gaze: OFF</button>
+        </div>
+        <div id="voice-status-container" class="voice-status-container">
+            <div id="voice-indicator" class="voice-indicator"></div>
+            <span id="voice-status-text" class="voice-status-text">OFFLINE</span>
+        </div>
     </div>
 
-    <div class="split">
+    <div class="split study-page">
 
-        <div class="pdf-section">
-            <h3>Upload PDF</h3>
+        <!-- ── LEFT: PDF SECTION ─────────────────────────────────────── -->
+        <div class="pdf-section glass-card" id="pdf-section"
+             style="border-radius:0; border:none; border-right:1px solid rgba(0,0,0,0.05); position:relative;">
 
-            <input type="file" id="pdf-upload" accept="application/pdf">
-            <button onclick="uploadPDF()">Upload</button>
-
-            <hr>
-
-            <div id="pdf-container"></div>
-        </div>
-
-        <div class="chat-section">
-
-            <div id="chat-box"></div>
-
-            <div class="input-area">
-                <input id="user-input" placeholder="Ask about this paper...">
-                <button onclick="sendMessage()">➤</button>
-                <button id="micBtn">🎤</button>
+            <!-- Upload panel (shown when no PDF is loaded) -->
+            <div class="upload-control glass-card" id="upload-panel"
+                 style="padding:20px; margin-bottom:20px; border-radius:16px;">
+                <h3 style="font-size:1.1rem; margin-bottom:12px;">Active Document</h3>
+                <div style="display:flex; gap:15px; align-items:center;">
+                    <label for="pdf-upload" class="primary-btn-large"
+                           style="margin:0; cursor:pointer; background:#f1f5f9; color:var(--primary); padding:12px 20px;">
+                        Choose PDF
+                    </label>
+                    <input type="file" id="pdf-upload" accept="application/pdf" style="display:none;"
+                           onchange="this.nextElementSibling.innerText = this.files[0]?.name || 'No file chosen'">
+                    <span class="file-name-label" id="file-name-label"
+                          style="font-size:0.9rem; color:var(--text-secondary);">No file chosen</span>
+                    <button onclick="uploadPDF()" class="primary-btn-large"
+                            style="padding:12px 24px; font-size:0.9rem; margin:0; box-shadow:none;">
+                        Upload &amp; Process
+                    </button>
+                </div>
             </div>
 
+            <!-- Floating "New Chat" mini button (shown after PDF loads) -->
+            <div id="new-chat-fab" class="new-chat-fab" title="Start a new chat" style="display:none;"
+                 onclick="promptNewChat()">
+                <span class="fab-icon">＋</span>
+                <span class="fab-label">New Chat</span>
+            </div>
+
+            <!-- PDF canvas container -->
+            <div id="pdf-container">
+                <p style="color:var(--text-secondary); text-align:center; margin-top:50px;">
+                    Choose a paper from your Repository or Upload here to begin.
+                </p>
+            </div>
         </div>
 
-    </div>
+        <!-- ── RIGHT: CHAT SECTION ────────────────────────────────────── -->
+        <div class="chat-section">
+            <div id="chat-box">
+                <div class="message ai">
+                    <p>Hello! I am your research assistant. Open a paper on the left or resume a discussion from your Library to get started.</p>
+                </div>
+            </div>
 
+            <!-- New Chat confirmation banner (hidden by default) -->
+            <div id="new-chat-banner" class="new-chat-banner" style="display:none;">
+                <span>💬 Start a new chat? This discussion will be saved to your Library.</span>
+                <div class="banner-btns">
+                    <button class="banner-yes" onclick="confirmNewChat()">Yes, Start Fresh</button>
+                    <button class="banner-no"  onclick="dismissNewChat()">Keep Chatting</button>
+                </div>
+            </div>
+
+            <div class="input-area glass-card"
+                 style="border-radius:0; border:none; border-top:1px solid rgba(0,0,0,0.05);">
+                <input type="text" id="user-input" placeholder="Ask anything about the research...">
+                <button onclick="sendMessage()" id="send-btn">➜</button>
+                <button id="micBtn" style="background:#f1f5f9; color:var(--primary); margin-left:5px;">🎙️</button>
+            </div>
+        </div>
+    </div>
 </div>
 
-<script src="/static/script.js"></script>
+<script src="/static/script.js?v=3"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+<script src="/static/gaze.js?v=8"></script>
+<script src="/static/wave.js"></script>
+
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+// ── After PDF loads: collapse upload panel, show FAB ──────────────────
+function onPaperLoaded() {
+    const panel = document.getElementById('upload-panel');
+    const fab   = document.getElementById('new-chat-fab');
+    if (panel) {
+        panel.style.transition = 'all 0.4s cubic-bezier(0.16,1,0.3,1)';
+        panel.style.maxHeight  = '0';
+        panel.style.padding    = '0';
+        panel.style.margin     = '0';
+        panel.style.overflow   = 'hidden';
+        panel.style.opacity    = '0';
+    }
+    if (fab) fab.style.display = 'flex';
+}
+
+// Override loadPDF from script.js to call onPaperLoaded after rendering
+const _origLoadPDF = window.loadPDF;
+window.loadPDF = async function(url) {
+    await _origLoadPDF(url);
+    onPaperLoaded();
+};
+
+// ── New Chat flow ─────────────────────────────────────────────────────
+function promptNewChat() {
+    document.getElementById('new-chat-banner').style.display = 'flex';
+    confirmationCallback = confirmNewChat; // Hook up the voice 'yes' command
+    if (typeof speakText === 'function')
+        speakText('Start a new chat? This discussion will be saved to your Library. Say yes or no, or click the buttons.');
+}
+
+function dismissNewChat() {
+    document.getElementById('new-chat-banner').style.display = 'none';
+    confirmationCallback = null; // Clear hook
+    if (typeof speakText === 'function') speakText('Continuing current chat.');
+}
+
+async function confirmNewChat() {
+    document.getElementById('new-chat-banner').style.display = 'none';
+    confirmationCallback = null; // Clear hook
+
+    // The current thread_id is already auto-saved to discussions by the backend on each /chat call.
+    // We just need to reset the frontend state and clear the AI's loaded paper.
+    try { await fetch('/clear-context', { method: 'POST' }); } catch(e) {}
+
+    // Reset thread so a fresh one is created on next message
+    window.currentThreadId = null;
+    const url = new URL(window.location.href);
+    url.searchParams.delete('thread');
+    url.searchParams.delete('file');
+    window.history.replaceState({}, '', url.toString());
+
+    // Clear chat UI
+    const chatBox = document.getElementById('chat-box');
+    chatBox.innerHTML = `
+        <div class="message ai">
+            <p>New chat started! Your previous discussion has been saved to the Library. Upload a new paper or ask me anything.</p>
+        </div>`;
+
+    // Show upload panel again, hide FAB
+    const panel = document.getElementById('upload-panel');
+    const fab   = document.getElementById('new-chat-fab');
+    if (panel) {
+        panel.style.transition = 'all 0.4s cubic-bezier(0.16,1,0.3,1)';
+        panel.style.maxHeight  = '500px';
+        panel.style.padding    = '20px';
+        panel.style.margin     = '0 0 20px 0';
+        panel.style.overflow   = 'visible';
+        panel.style.opacity    = '1';
+    }
+    if (fab) fab.style.display = 'none';
+
+    // Clear PDF canvas
+    const pdfContainer = document.getElementById('pdf-container');
+    pdfContainer.innerHTML = `<p style="color:var(--text-secondary); text-align:center; margin-top:50px;">
+        Choose a paper from your Repository or Upload here to begin.</p>`;
+
+    document.getElementById('file-name-label').innerText = 'No file chosen';
+
+    if (typeof speakText === 'function') speakText('New chat started. Your previous discussion is saved in the Library.');
+}
+
+// ── DOMContentLoaded ──────────────────────────────────────────────────
+document.addEventListener("DOMContentLoaded", () => {
+    if (typeof initGaze === 'function') initGaze();
+
+    const params = new URLSearchParams(window.location.search);
+    const file   = params.get('file');
+    const thread = params.get('thread');
+
+    if (file || thread) {
+        // Paper/thread was passed in URL — collapse upload panel immediately
+        onPaperLoaded();
+    }
+});
+</script>
+
+<style>
+/* ── Upload panel collapse ───────────────────────────────────────────── */
+#upload-panel {
+    max-height: 200px;
+    overflow: visible;
+    transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+}
+
+/* ── Floating New Chat button (FAB) ─────────────────────────────────── */
+.new-chat-fab {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(99,102,241,0.25);
+    color: #6366f1;
+    border-radius: 100px;
+    padding: 8px 16px 8px 10px;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(99,102,241,0.15);
+    transition: all 0.2s ease;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    user-select: none;
+}
+.new-chat-fab:hover {
+    background: #6366f1;
+    color: #fff;
+    transform: scale(1.05);
+    box-shadow: 0 6px 24px rgba(99,102,241,0.35);
+}
+.fab-icon {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: rgba(99,102,241,0.12);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; line-height: 1;
+    transition: background 0.2s;
+}
+.new-chat-fab:hover .fab-icon { background: rgba(255,255,255,0.2); }
+
+/* ── New Chat confirmation banner ───────────────────────────────────── */
+.new-chat-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(6,182,212,0.06));
+    border-top: 1px solid rgba(99,102,241,0.15);
+    border-bottom: 1px solid rgba(99,102,241,0.15);
+    padding: 14px 24px;
+    font-size: 0.9rem;
+    color: var(--primary);
+    animation: slideDown 0.3s ease;
+    flex-wrap: wrap;
+}
+@keyframes slideDown {
+    from { opacity:0; transform:translateY(-8px); }
+    to   { opacity:1; transform:translateY(0); }
+}
+.banner-btns { display:flex; gap:10px; }
+.banner-yes {
+    background: #6366f1; color:#fff;
+    border:none; border-radius:10px;
+    padding: 8px 18px; font-weight:600; font-size:0.85rem;
+    cursor:pointer; transition:all 0.2s;
+}
+.banner-yes:hover { background: #4f46e5; transform:scale(1.03); }
+.banner-no {
+    background: #f1f5f9; color:var(--primary);
+    border:none; border-radius:10px;
+    padding: 8px 18px; font-weight:600; font-size:0.85rem;
+    cursor:pointer; transition:all 0.2s;
+}
+.banner-no:hover { background:#e2e8f0; }
+</style>
 
 </body>
 </html>

@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Voice Commands Reference | AI Research Assistant</title>
+    <link rel="stylesheet" href="/static/style.css?v=2">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<div class="app">
+    
+    <div class="navbar">
+        <h2 class="logo">AI Research</h2>
+        <div class="nav-links">
+            <button id="hf-toggle" onclick="toggleHandsFree()" class="hf-btn off">Hands-Free: OFF</button>
+            <a href="/"><button>Home</button></a>
+            <a href="/study"><button>Study</button></a>
+            <a href="/papers"><button>Library</button></a>
+            <a href="/saved"><button>Saved</button></a>
+            <a href="/commands"><button class="active">Commands</button></a>
+            <a href="/trending"><button>Trending</button></a>
+            <button id="gaze-toggle" onclick="toggleGaze()" class="hf-btn off gaze-btn">Gaze: OFF</button>
+        </div>
+        <div id="voice-status-container" class="voice-status-container">
+            <div id="voice-indicator" class="voice-indicator"></div>
+            <span id="voice-status-text" class="voice-status-text">OFFLINE</span>
+        </div>
+    </div>
+
+    <div class="main dashboard" style="max-width: 1060px; margin: 0 auto; padding-top: 40px;">
+
+        <!-- Header with live mic badge -->
+        <div class="dashboard-header glass-card" style="padding: 40px; margin-bottom: 40px; border-radius: 32px; flex-direction: column; align-items: flex-start; gap: 18px;">
+            <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
+                <h1 style="font-size: 2.8rem; margin-bottom: 0;">Voice Commands Brochure</h1>
+                <!-- Live mic state badge -->
+                <div id="mic-badge" class="mic-badge" title="Current microphone status">
+                    <span id="mic-badge-dot" class="mic-badge-dot"></span>
+                    <span id="mic-badge-text">Mic: Offline</span>
+                </div>
+            </div>
+            <p class="desc" style="margin-bottom:0;">
+                Every command requires the wake word <strong>"Hey Assistant"</strong> spoken first, then the action.<br>
+                Example: <em>"Hey assistant, go home"</em> &nbsp;|&nbsp; <em>"Hey assistant, ask what is attention?"</em>
+            </p>
+            <!-- Wake word legend -->
+            <div class="wake-word-legend">
+                <span class="wake-chip">Wake word</span>
+                <span style="color:var(--text-secondary); font-size:0.9rem;">→ say this before every command below</span>
+                <span class="wake-example">"Hey&nbsp;Assistant" &nbsp;/&nbsp; "Assistant" &nbsp;/&nbsp; "Computer" &nbsp;/&nbsp; "AI" &nbsp;/&nbsp; "Research"</span>
+            </div>
+        </div>
+
+        <div class="papers-grid" style="grid-template-columns: repeat(auto-fill, minmax(460px, 1fr));">
+            
+            <!-- NAVIGATION -->
+            <div class="paper-card glass-card">
+                <h3>🧭 Navigation Commands</h3>
+                <p style="font-size: 0.9rem; color: var(--text-secondary);">Jump directly between pages. Say the wake word + the command below.</p>
+                <ul class="command-list" style="list-style: none; margin-top: 15px;">
+                    <li>
+                        <div class="cmd-row">
+                            <span class="cmd-wake">Hey Assistant</span>
+                            <span class="cmd-arrow">›</span>
+                            <span class="cmd-action">"go home"</span>
+                        </div>
+                        <span>Navigates you to the main landing page.</span>
+                    </li>
+                    <li>
+                        <div class="cmd-row">
+                            <span class="cmd-wake">Hey Assistant</span>
+                            <span class="cmd-arrow">›</span>
+                            <span class="cmd-action">"go to study"</span>
+                        </div>
+                        <span>Opens the interactive research environment with PDF viewer and AI chat.</span>
+                    </li>
+                    <li>
+                        <div class="cmd-row">
+                            <span class="cmd-wake">Hey Assistant</span>
+                            <span class="cmd-arrow">›</span>
+                            <span class="cmd-action">"go to library"</span>
+                        </div>
+                        <span>Accesses your conversation history and previous discussions.</span>
+                    </li>
+                    <li>
+                        <div class="cmd-row">
+                            <span class="cmd-wake">Hey Assistant</span>
+                            <span class="cmd-arrow">›</span>
+                            <span class="cmd-action">"go to saved"</span>
+                        </div>
+                        <span>Views your personal repository of uploaded research papers.</span>
+                    </li>
+                    <li>
+                        <div class="cmd-row">
+                            <span class="cmd-wake">Hey Assistant</span>
+                            <span class="cmd-arrow">›</span>
+                            <span class="cmd-action">"go to trending"</span>
+                        </div>
+                        <span>Opens the latest research paper search tool.</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- SYSTEM & VOICE -->
+            <div class="paper-card glass-card">
+                <h3>🎙️ System &amp; Voice Control</h3>
+                <p style="font-size: 0.9rem; color: var(--text-secondary);">Global controls for speech and assistant states.</p>
+                <ul class="command-list" style="list-style: none; margin-top: 15px;">
+                    <li>
+                        <div class="cmd-row">
+                            <span class="cmd-wake">Hey Assistant</span>
+                            <span class="cmd-arrow">›</span>
+                            <span class="cmd-action">"stop" / "cancel" / "undo"</span>
+                        </div>
+                        <span>Immediately stops the AI from speaking and cancels any pending task.</span>
+                    </li>
+                    <li>
+                        <div class="cmd-row">
+                            <span class="cmd-wake">Hey Assistant</span>
+                            <span class="cmd-arrow">›</span>
+                            <span class="cmd-action">"deactivate hands free"</span>
+                        </div>
+                        <span>Turns off the microphone and stops the assistant from listening.</span>
+                    </li>
+                    <li>
+                        <div class="cmd-row">
+                            <span class="cmd-wake">Hey Assistant</span>
+                            <span class="cmd-arrow">›</span>
+                            <span class="cmd-action">"where am I?"</span>
+                        </div>
+                        <span>AI will vocally describe your current page and active document context.</span>
+                    </li>
+                    <li>
+                        <div class="cmd-row">
+                            <span class="cmd-wake">Hey Assistant</span>
+                            <span class="cmd-arrow">›</span>
+                            <span class="cmd-action">"start new chat"</span>
+                        </div>
+                        <span>Clears the active paper and chat, starting fresh.</span>
+                    </li>
+                    <li>
+                        <div class="cmd-row">
+                            <span class="cmd-wake">Hey Assistant</span>
+                            <span class="cmd-arrow">›</span>
+                            <span class="cmd-action">"yes" / "no"</span>
+                        </div>
+                        <span>Used to confirm or deny prompts like "Start a new chat?".</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- RESEARCH -->
+            <div class="paper-card glass-card">
+                <h3>📑 Research Interaction</h3>
+                <p style="font-size: 0.9rem; color: var(--text-secondary);">Keywords to interact with papers and the AI knowledge base.</p>
+                <ul class="command-list" style="list-style: none; margin-top: 15px;">
+                    <li>
+                        <div class="cmd-row">
+                            <span class="cmd-wake">Hey Assistant</span>
+                            <span class="cmd-arrow">›</span>
+                            <span class="cmd-action">"open paper 2"</span>
+                        </div>
+                        <span>Loads document #2 based on its numerical rank in the current list.</span>
+                    </li>
+                    <li>
+                        <div class="cmd-row">
+                            <span class="cmd-wake">Hey Assistant</span>
+                            <span class="cmd-arrow">›</span>
+                            <span class="cmd-action">"ask what is attention?"</span>
+                        </div>
+                        <span>Sends any question directly to the AI chat. Also works with "type" or "say".</span>
+                    </li>
+                    <li>
+                        <div class="cmd-row">
+                            <span class="cmd-wake">Hey Assistant</span>
+                            <span class="cmd-arrow">›</span>
+                            <span class="cmd-action">"study attention is all you need"</span>
+                        </div>
+                        <span>Searches your repository for a paper by title and opens it for study.</span>
+                    </li>
+                    <li>
+                        <div class="cmd-row">
+                            <span class="cmd-wake">Hey Assistant</span>
+                            <span class="cmd-arrow">›</span>
+                            <span class="cmd-action">"read all commands"</span>
+                        </div>
+                        <span>Reads the entire commands brochure aloud from start to finish.</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- KEYBOARD SHORTCUTS -->
+            <div class="paper-card glass-card">
+                <h3>⌨️ Keyboard Shortcuts</h3>
+                <p style="font-size: 0.9rem; color: var(--text-secondary);">Quick physical fallback controls — no wake word needed.</p>
+                <ul class="command-list" style="list-style: none; margin-top: 15px;">
+                    <li>
+                        <div class="cmd-row key-row">
+                            <span class="key-chip">Spacebar</span>
+                        </div>
+                        <span>Instantly silences the assistant while it is talking.</span>
+                    </li>
+                    <li>
+                        <div class="cmd-row key-row">
+                            <span class="key-chip">Shift</span>
+                            <span class="cmd-arrow">+</span>
+                            <span class="key-chip">H</span>
+                        </div>
+                        <span>Toggles Hands-Free Mode ON or OFF.</span>
+                    </li>
+                    <li>
+                        <div class="cmd-row key-row">
+                            <span class="key-chip">← Arrow</span>
+                            <span style="color:var(--text-secondary);">/</span>
+                            <span class="key-chip">→ Arrow</span>
+                        </div>
+                        <span>Navigates sequentially through all main pages.</span>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="/static/script.js"></script>
+<script src="/static/wave.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+<script src="/static/gaze.js?v=7"></script>
+<script>
+    // ── Live mic badge sync ─────────────────────────────────────────────────
+    const stateLabels = {
+        listening:  { text: "Mic: Listening",  color: "#ef4444" },
+        processing: { text: "Mic: Processing", color: "#f59e0b" },
+        executing:  { text: "Mic: Executing",  color: "#f59e0b" },
+        on:         { text: "Mic: Done ✓",     color: "#22c55e" },
+        standby:    { text: "Mic: Active",      color: "#94a3b8" },
+        off:        { text: "Mic: Offline",     color: "#cbd5e1" }
+    };
+
+    // Observe changes on the voice indicator's data-state attribute
+    const _origUpdate = window.updateVoiceIndicator;
+    // Override to also update the badge
+    const _voiceInd = () => document.getElementById('voice-indicator');
+    function syncMicBadge(state) {
+        const badge    = document.getElementById('mic-badge');
+        const badgeDot = document.getElementById('mic-badge-dot');
+        const badgeTxt = document.getElementById('mic-badge-text');
+        if (!badge) return;
+        const s = stateLabels[state] || stateLabels.off;
+        badgeDot.style.background = s.color;
+        badgeTxt.textContent = s.text;
+        badge.dataset.state = state;
+    }
+
+    // Monkey-patch updateVoiceIndicator after scripts load
+    document.addEventListener("DOMContentLoaded", () => {
+        const orig = window.updateVoiceIndicator;
+        window.updateVoiceIndicator = function(state) {
+            orig(state);
+            syncMicBadge(state);
+        };
+
+        // Auto-read brochure if hands-free is on
+        if (typeof isHandsFreeON !== 'undefined' && isHandsFreeON) {
+            // Increased delay (1.8s) to let the "Gaze Activated/Resumed" finish talking first
+            setTimeout(() => {
+                const params = new URLSearchParams(window.location.search);
+                const autostart = params.get('autostart') === 'true';
+
+                confirmationCallback = () => {
+                    const text = `
+                        Navigation: Hey Assistant go home. Hey Assistant go to study. Hey Assistant go to library. Hey Assistant go to saved. Hey Assistant go to trending.
+                        System: Hey Assistant stop. Hey Assistant deactivate hands free. Hey Assistant where am I. Hey Assistant start new chat.
+                        Research: Hey Assistant open paper 1. Hey Assistant ask your question. Hey Assistant study paper title.
+                        Keyboard: Spacebar to silence. Shift plus H to toggle hands free. Arrow keys to change pages.
+                    `;
+                    speakText("Reading the brochure. " + text);
+                    confirmationCallback = null;
+                };
+
+                if (autostart) {
+                    confirmationCallback();
+                } else {
+                    // Explicitly ask for yes/no for better blind-user experience
+                    speakText("Voice Commands Brochure. I can read all the vocal keywords for you. Should I begin? Say yes or no.");
+                }
+            }, 1800);
+        }
+    });
+</script>
+
+<style>
+    .command-list li {
+        padding: 14px 0;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    .command-list li:last-child { border-bottom: none; }
+    .command-list li span {
+        color: var(--text-secondary);
+        font-size: 0.88rem;
+        line-height: 1.4;
+        display: block;
+        margin-top: 5px;
+    }
+
+    /* Command row: Wake word › action */
+    .cmd-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 4px;
+    }
+    .cmd-wake {
+        background: rgba(59,130,246,0.12);
+        color: #3b82f6;
+        font-weight: 700;
+        font-size: 0.82rem;
+        padding: 3px 10px;
+        border-radius: 8px;
+        font-family: 'Outfit', sans-serif;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+    }
+    .cmd-arrow {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+    .cmd-action {
+        color: var(--accent);
+        font-weight: 700;
+        font-size: 0.95rem;
+        font-family: 'Outfit', sans-serif;
+    }
+
+    /* Keyboard shortcut chips */
+    .key-row { gap: 6px; }
+    .key-chip {
+        background: #f1f5f9;
+        border: 1px solid rgba(0,0,0,0.1);
+        border-radius: 8px;
+        padding: 4px 12px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        font-family: 'Outfit', monospace;
+        color: var(--primary);
+        box-shadow: 0 2px 0 rgba(0,0,0,0.08);
+    }
+
+    /* Wake word legend */
+    .wake-word-legend {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        padding: 14px 20px;
+        background: rgba(59,130,246,0.06);
+        border: 1px solid rgba(59,130,246,0.18);
+        border-radius: 14px;
+        font-size: 0.9rem;
+    }
+    .wake-chip {
+        background: rgba(59,130,246,0.15);
+        color: #3b82f6;
+        font-weight: 700;
+        padding: 4px 12px;
+        border-radius: 8px;
+        font-size: 0.82rem;
+        white-space: nowrap;
+    }
+    .wake-example {
+        color: #3b82f6;
+        font-weight: 600;
+        font-style: italic;
+        font-size: 0.88rem;
+    }
+
+    /* Live mic badge */
+    .mic-badge {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: #fff;
+        border: 1px solid rgba(0,0,0,0.07);
+        border-radius: 12px;
+        padding: 6px 16px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        font-family: 'Outfit', sans-serif;
+        letter-spacing: 0.03em;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        color: var(--text-secondary);
+        text-transform: uppercase;
+    }
+    .mic-badge-dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: #cbd5e1;
+        transition: background 0.3s ease;
+        flex-shrink: 0;
+    }
+    /* Animate the dot when listening */
+    .mic-badge[data-state="listening"] .mic-badge-dot { animation: pulse-red 1.2s infinite; }
+    .mic-badge[data-state="processing"] .mic-badge-dot,
+    .mic-badge[data-state="executing"]  .mic-badge-dot { animation: pulse-yellow 1.4s infinite; }
+    .mic-badge[data-state="on"] .mic-badge-dot { animation: pulse-green 0.8s ease 1; }
+    .mic-badge[data-state="listening"] #mic-badge-text  { color: #ef4444; }
+    .mic-badge[data-state="processing"] #mic-badge-text,
+    .mic-badge[data-state="executing"]  #mic-badge-text { color: #f59e0b; }
+    .mic-badge[data-state="on"]  #mic-badge-text        { color: #22c55e; }
+</style>
+
+</body>
+</html>

@@ -1,8 +1,8 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <title>Discussion History | Research Library</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <title>Research Repository | AI Assistant</title>
+    <link rel="stylesheet" href="/static/style.css?v=2">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
@@ -16,8 +16,8 @@
             <button id="hf-toggle" onclick="toggleHandsFree()" class="hf-btn off">Hands-Free: OFF</button>
             <a href="/"><button>Home</button></a>
             <a href="/study"><button>Study</button></a>
-            <a href="/papers"><button class="active">Library</button></a>
-            <a href="/saved"><button>Saved</button></a>
+            <a href="/papers"><button>Library</button></a>
+            <a href="/saved"><button class="active">Saved</button></a>
             <a href="/commands"><button>Commands</button></a>
             <a href="/trending"><button>Trending</button></a>
             <button id="gaze-toggle" onclick="toggleGaze()" class="hf-btn off gaze-btn">Gaze: OFF</button>
@@ -31,14 +31,19 @@
     <div class="main dashboard">
         <div class="dashboard-header glass-card" style="padding: 30px; box-shadow: none; border-radius: 24px; margin-top:20px; width: 100%;">
             <div>
-                <h1 style="font-size: 2.5rem; text-align: left; margin-bottom: 8px;">Discussion History</h1>
-                <p class="desc" style="text-align: left; margin-bottom: 0;">Access and resume all your previous voice and text-based research sessions.</p>
+                <h1 style="font-size: 2.5rem; text-align: left; margin-bottom: 8px;">Research Repository</h1>
+                <p class="desc" style="text-align: left; margin-bottom: 0;">Upload and manage your scientific literature collection for study.</p>
+            </div>
+            
+            <div class="header-actions">
+                <input type="file" id="lib-upload" accept="application/pdf" style="display:none;" onchange="uploadFromLibrary()">
+                <button onclick="document.getElementById('lib-upload').click()" class="primary-btn-large" style="padding: 14px 28px; font-size: 1rem; margin: 0;">Upload Paper</button>
             </div>
         </div>
         
-        <div id="discussions-grid" class="papers-grid" style="margin-top: 40px; width: 100%;">
-            <!-- Populated by loadDiscussions in script.js -->
-            <p>Loading your discussions...</p>
+        <div id="repo-grid" class="papers-grid" style="margin-top: 40px; width: 100%;">
+            <!-- Populated by loadRepository in script.js -->
+            <p>Loading your research files...</p>
         </div>
     </div>
 </div>
@@ -49,7 +54,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
 <script src="/static/gaze.js?v=6"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", loadDiscussions);
+    document.addEventListener("DOMContentLoaded", loadRepositoryList);
 </script>
 </body>
 </html>
