@@ -35,8 +35,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy project
 COPY . .
 
-# Expose the port the app runs on
-EXPOSE 7000
+# Create uploads directory and initialize database
+RUN mkdir -p /app/uploads && python init_db.py
 
-# Run the application
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7000"]
+# Hugging Face Spaces requires port 7860
+EXPOSE 7860
+
+# Run the application on port 7860 (HF Spaces) or fallback to 7000 (local)
+CMD uvicorn main:app --host 0.0.0.0 --port ${PORT:-7860}
