@@ -25,9 +25,16 @@ let isBlinking = false;
 // If gaze stays in top zone for DWELL_MS → scroll up.
 const DWELL_MS          = 2000;  // 2 seconds dwell before scroll fires
 const SCROLL_AMOUNT     = 220;   // px per scroll event
-const BOTTOM_ZONE       = 0.78;  // bottom 22% of screen
-const TOP_ZONE          = 0.12;  // top 12% of screen
-const SCROLL_COOLDOWN   = 800;   // ms between auto-scrolls
+const BOTTOM_ZONE       = 0.75;  // bottom 25% of screen
+const TOP_ZONE          = 0.15;  // top 15% of screen
+const SCROLL_COOLDOWN   = 600;   // ms between auto-scrolls
+
+// ── DWELL-CLICK ADVANCED ──────────────────────────────────────────────────
+const DWELL_CLICK_MS    = 2000;  // 2s fixed look = click
+const DWELL_RADIUS      = 30;    // max px jitter to count as 'fixed'
+let lastDwellClickPos   = { x: 0, y: 0 };
+let dwellClickStart     = 0;
+let isDwellingToClick   = false;
 
 let dwellZone           = null;  // 'up' | 'down' | null
 let dwellStart          = 0;
@@ -252,8 +259,47 @@ function onResults(results) {
             if (now - lastScrollTime > SCROLL_COOLDOWN) {
                 lastScrollTime = now;
                 dwellStart = now;
-                window.scrollBy({ top: dwellZone === 'down' ? SCROLL_AMOUNT : -SCROLL_AMOUNT, behavior: 'smooth' });
+
+                // 🎯 ELEMENT-SPECIFIC SCROLLING
+                const targetEl = document.elementFromPoint(smoothX, smoothY);
+                let scrollTarget = window;
+                if (targetEl) {
+                    // Find closest scrollable parent among known IDs
+                    const chatBox = targetEl.closest('#chat-box, #tutor-chat-box, #pdf-container, #learning-path, #pdf-section, .pdf-section, .side-panel');
+                    if (chatBox) scrollTarget = chatBox;
+                }
+
+                scrollTarget.scrollBy({ 
+                    top: dwellZone === 'down' ? SCROLL_AMOUNT : -SCROLL_AMOUNT, 
+                    behavior: 'smooth' 
+                });
             }
+        }
+
+        // ── 6. DWELL-CLICK (STARE AT ONE SPOT) ───────────────────────────────
+        const dist = Math.hypot(smoothX - lastDwellClickPos.x, smoothY - lastDwellClickPos.y);
+        
+        if (dist < DWELL_RADIUS) {
+            // User is staring at roughly the same spot
+            if (!isDwellingToClick) {
+                isDwellingToClick = true;
+                dwellClickStart = now;
+            } else if (now - dwellClickStart >= DWELL_CLICK_MS) {
+                // TIMER EXPIRED -> CLICK
+                triggerGazeClick(smoothX, smoothY);
+                // After click, reset so we don't spam-click the same spot
+                dwellClickStart = now + 1000; 
+                isDwellingToClick = false;
+            }
+            // Visual indicator
+            if (now - dwellClickStart > 300 && gazeDot) {
+                gazeDot.classList.add('dwelling');
+            }
+        } else {
+            // User moved face significantly
+            isDwellingToClick = false;
+            lastDwellClickPos = { x: smoothX, y: smoothY };
+            if (gazeDot) gazeDot.classList.remove('dwelling');
         }
     }
 }
@@ -323,13 +369,16 @@ function stopCamera() {
 function triggerGazeClick(x, y) {
     if (!gazeDot) return;
     
+    // Stop any pending dwell
+    isDwellingToClick = false;
+    if (gazeDot) gazeDot.classList.remove('dwelling');
+
     gazeDot.classList.add('clicking');
-    setTimeout(() => gazeDot.classList.remove('clicking'), 350);
+    setTimeout(() => gazeDot.classList.remove('clicking'), 500);
 
     gazeDot.style.pointerEvents = 'none';
     const target = document.elementFromPoint(x, y);
     if (target && typeof target.click === 'function') {
-        if (typeof speakText === 'function') speakText('Clicked');
         target.click();
     }
 }

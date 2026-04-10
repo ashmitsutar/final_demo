@@ -1,0 +1,11 @@
+services:
+  ai-assistant:
+    build: .
+    ports:
+      - "7000:7000"
+    env_file:
+      - .env
+    volumes:
+      - ./uploads:/app/uploads
+      - ./chatbot.db:/app/chatbot.db
+    restart: always

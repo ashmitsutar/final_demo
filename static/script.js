@@ -111,9 +111,15 @@ async function loadPDF(url) {
             }).promise;
             container.appendChild(canvas);
         }
+        if (typeof isHandsFreeON !== 'undefined' && isHandsFreeON) {
+            speakText("Successful");
+        }
     } catch (err) {
         console.error("PDF load error:", err);
         container.innerHTML = "<p>Error loading PDF</p>";
+        if (typeof isHandsFreeON !== 'undefined' && isHandsFreeON) {
+            speakText("Error");
+        }
     }
 }
 
@@ -193,17 +199,20 @@ function speakText(text, btn) {
 
     utterance.onstart = () => {
         if (btn) btn.innerHTML = "🛑";
+        document.querySelectorAll('.voice-visualizer').forEach(v => v.classList.add('speaking'));
     };
 
     utterance.onend = () => {
         if (btn) btn.innerHTML = "🔊";
         currentSpeakingBtn = null;
+        document.querySelectorAll('.voice-visualizer').forEach(v => v.classList.remove('speaking'));
     };
 
     utterance.onerror = (e) => {
         console.error("TTS Error:", e);
         if (btn) btn.innerHTML = "🔊";
         currentSpeakingBtn = null;
+        document.querySelectorAll('.voice-visualizer').forEach(v => v.classList.remove('speaking'));
     };
 
     window.speechSynthesis.speak(utterance);
@@ -709,7 +718,7 @@ function startListening() {
             const silenceTime = now - lastSpeechTime;
 
             // 🔥 if silent OR running too long → reset
-            if (silenceTime > 10000) {
+            if (silenceTime > 7000) {
                 console.log("Force restarting due to silence...");
 
                 try { recognition.stop(); } catch (e) { }
@@ -717,7 +726,7 @@ function startListening() {
 
                 setTimeout(() => {
                     try { startListening(); } catch (e) { }
-                }, 10000);
+                }, 7000);
             }
         }, 15000);
     }
@@ -754,6 +763,21 @@ async function processOfflineCommand(transcript) {
         return;
     }
 
+    // Special Command: TYPE [message]
+    if (command.startsWith("type ")) {
+        let msg = command.replace("type ", "").trim();
+        const input = document.getElementById("user-input") || document.getElementById("tutor-input");
+        if (input) {
+            input.value = msg;
+            if (window.location.pathname === "/tutor") {
+                if (typeof sendTutorMessage === 'function') sendTutorMessage(msg);
+            } else {
+                sendMessage();
+            }
+        }
+        return;
+    }
+
     // NAVIGATION COMMANDS
     if (command.includes("go home") || command.includes("go to home")) navigateTo("/", "Home");
     else if (command.includes("go to library") || command.includes("discussions")) navigateTo("/papers", "Library");
@@ -762,6 +786,7 @@ async function processOfflineCommand(transcript) {
     else if (command.includes("go to study")) navigateTo("/study", "Study");
     else if (command.includes("read all commands") || command.includes("special one")) navigateTo("/commands?autostart=true", "Commands Reference");
     else if (command.includes("go to command") || command.includes("brochure") || command.includes("what commands")) navigateTo("/commands", "Commands Reference");
+    else if (command.includes("go to ai tutor") || command.includes("go to tutor") || command.includes("ai tutor") || command.includes("tutor")) navigateTo("/tutor", "AI Tutor");
 
     // BLIND ASSISTANCE: WHERE AM I?
     else if (command.includes("where am i") || command.includes("what is here") || command.includes("what's here")) {

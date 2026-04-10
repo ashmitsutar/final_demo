@@ -166,7 +166,7 @@ h1, h2, h3, .logo {
 /* RED  — actively listening for wake word */
 .voice-indicator[data-state="listening"] {
     background: #ef4444;
-    animation: pulse-red 1.2s infinite;
+    animation: pulse-red 1.2s infinite, sway 2s ease-in-out infinite;
 }
 /* YELLOW — processing speech / executing */
 .voice-indicator[data-state="processing"],
@@ -207,6 +207,41 @@ h1, h2, h3, .logo {
     0%   { transform: scale(0.9); box-shadow: 0 0 0 0   rgba(34, 197, 94, 0.7); }
     70%  { transform: scale(1.2); box-shadow: 0 0 0 14px rgba(34, 197, 94, 0); }
     100% { transform: scale(1.0); box-shadow: 0 0 0 0   rgba(34, 197, 94, 0); }
+}
+
+@keyframes sway {
+    0%, 100% { transform: translateY(0) scale(1.1); }
+    50% { transform: translateY(-5px) scale(1.15); }
+}
+
+.tutor-cmd-box {
+    margin-top: 15px;
+    padding: 12px;
+    background: rgba(15, 23, 42, 0.03);
+    border-radius: 12px;
+    border: 1px dashed rgba(15, 23, 42, 0.1);
+}
+
+.tutor-cmd-box h4 {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+
+.tutor-cmd-box ul {
+    list-style: none;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.tutor-cmd-box li {
+    margin-bottom: 3px;
+    opacity: 0.8;
+}
+
+.tutor-cmd-box b {
+    color: var(--accent);
 }
 
 .voice-status-text {
@@ -519,8 +554,8 @@ h1, h2, h3, .logo {
 
 .pdf-section {
     flex: 1;
-    overflow-y: auto;
-    padding: 20px;
+    overflow: hidden; /* Container doesn't scroll, inner container does */
+    padding: 0; 
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -528,11 +563,12 @@ h1, h2, h3, .logo {
 
 #pdf-container {
     flex: 1;
+    width: 100%;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 10px;
+    padding: 20px;
 }
 
 #pdf-container canvas {
@@ -559,9 +595,52 @@ h1, h2, h3, .logo {
 }
 
 .gaze-dot.clicking {
-    background: rgba(220, 0, 0, 0.92) !important;
-    transform: translate(-50%, -50%) scale(1.6);
-    box-shadow: 0 0 28px rgba(220, 0, 0, 0.75);
+    background: #ef4444 !important; /* RED */
+    transform: translate(-50%, -50%) scale(2);
+    box-shadow: 0 0 35px #ef4444 !important;
+    animation: clickBlink 0.15s 2;
+}
+
+@keyframes clickBlink {
+    0% { opacity: 1; }
+    50% { opacity: 0.3; }
+    100% { opacity: 1; }
+}
+
+/* Dwell Loading progress (optional visual aid) */
+.gaze-dot::before {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: #ef4444; /* Red loading */
+    opacity: 0;
+    transition: opacity 0.2s;
+    animation: rotateDwell 1s linear infinite;
+    display: none;
+}
+
+.gaze-dot.dwelling::before {
+    display: block;
+    opacity: 1;
+}
+
+@keyframes rotateDwell {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes wave-animation {
+    0% { transform: scale(1); box-shadow: 0 0 20px var(--accent); }
+    25% { transform: scale(1.1) rotate(2deg); box-shadow: 0 0 40px var(--accent); }
+    50% { transform: scale(1.05) rotate(-2deg); box-shadow: 0 0 30px var(--accent); }
+    75% { transform: scale(1.15) rotate(1deg); box-shadow: 0 0 50px var(--accent); }
+    100% { transform: scale(1); box-shadow: 0 0 20px var(--accent); }
+}
+
+.voice-visualizer.speaking {
+    animation: wave-animation 0.6s infinite ease-in-out !important;
 }
 
 .hf-btn.gaze-btn {

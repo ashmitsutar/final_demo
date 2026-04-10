@@ -7,18 +7,20 @@ import urllib.request, urllib.parse, json
 
 import requests
 import model
+import textExtraction
 from textExtraction import load_user_pdf
+import ai_tutor
 
 from faster_whisper import WhisperModel
 
 # -------- WHISPER -------- #
 whisper_model = WhisperModel("base", device="cpu", compute_type="int8")
 
-# -------- PIPER TTS CONFIG -------- #
-PIPER_PATH = "D:/piper/piper.exe"
-MODEL_PATH = "D:/piper/voices/en_US-lessac-medium.onnx"
-CONFIG_PATH = "D:/piper/voices/en_US-lessac-medium.onnx.json"
-ESPEAK_PATH = "D:/piper/espeak-ng-data"
+# -------- PIPER TTS CONFIG (with Env Var fallbacks for deployment) -------- #
+PIPER_PATH = os.getenv("PIPER_PATH", "D:/piper/piper.exe")
+MODEL_PATH = os.getenv("PIPER_MODEL_PATH", "D:/piper/voices/en_US-lessac-medium.onnx")
+CONFIG_PATH = os.getenv("PIPER_CONFIG_PATH", "D:/piper/voices/en_US-lessac-medium.onnx.json")
+ESPEAK_PATH = os.getenv("PIPER_ESPEAK_PATH", "D:/piper/espeak-ng-data")
 
 app = FastAPI()
 
@@ -69,6 +71,11 @@ def trending():
 @app.get("/commands")
 def commands():
     return FileResponse("templates/commands.html")
+
+@app.get("/tutor")
+@app.get("/ai-tutor")
+def tutor_page():
+    return FileResponse("templates/tutor.html")
 
 @app.get("/trending-papers")
 def trending_papers(query: str = Query("AI")):
@@ -272,6 +279,34 @@ def chat(query: Query):
         print(f"Chat metadata error: {e}")
 
     return {"response": ans}
+
+class TutorQueryObj(BaseModel):
+    message: str
+    thread_id: str
+    mode: str = "chat"
+    is_story_mode: bool = False
+
+@app.post("/tutor-chat")
+def tutor_chat_endpoint(query: TutorQueryObj):
+    try:
+        ans_state = ai_tutor.get_tutor_response_from_graph(
+            query.thread_id, 
+            query.message, 
+            mode=query.mode, 
+            is_story_mode=query.is_story_mode
+        )
+        if isinstance(ans_state, dict):
+            return {
+                "response": ans_state.get("response", "Error getting response."),
+                "plan": ans_state.get("plan", []),
+                "current_step": ans_state.get("current_step", 0),
+                "difficulty": ans_state.get("difficulty", "Beginner")
+            }
+        else:
+            return {"response": str(ans_state)}
+    except Exception as e:
+        print(f"Tutor chat error: {e}")
+        return {"response": "Error in tutor response."}
 
 @app.get("/thread-info/{thread_id}")
 def get_thread_info(thread_id: str):

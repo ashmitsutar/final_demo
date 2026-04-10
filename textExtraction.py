@@ -1,9 +1,12 @@
 from langchain_community.document_loaders import PyMuPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import FAISS
+from dotenv import load_dotenv
+import os
 
-emb = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+load_dotenv()
+emb = OpenAIEmbeddings(model="text-embedding-3-small")
 
 def load_user_pdf(path):
     docs = PyMuPDFLoader(path).load()

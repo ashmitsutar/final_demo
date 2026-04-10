@@ -1,63 +1,69 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Trending Research</title>
     <link rel="stylesheet" href="/static/style.css?v=2">
 </head>
+
 <body>
 
-<div class="app">
-    
-    <div class="navbar">
-        <h2 class="logo">AI Research</h2>
-        <div class="nav-links">
-            <button id="hf-toggle" onclick="toggleHandsFree()" class="hf-btn off">Hands-Free: OFF</button>
-            <a href="/"><button>Home</button></a>
-            <a href="/study"><button>Study</button></a>
-            <a href="/papers"><button>Library</button></a>
-            <a href="/saved"><button>Saved</button></a>
-            <a href="/commands"><button>Commands</button></a>
-            <a href="/trending"><button class="active">Trending</button></a>
-            <button id="gaze-toggle" onclick="toggleGaze()" class="hf-btn off gaze-btn">Gaze: OFF</button>
-        </div>
-        <div id="voice-status-container" class="voice-status-container">
-            <div id="voice-indicator" class="voice-indicator"></div>
-            <span id="voice-status-text" class="voice-status-text">OFFLINE</span>
-        </div>
-    </div>
+    <div class="app">
 
-    <div class="main dashboard">
-        <div class="dashboard-header glass-card" style="padding: 30px; box-shadow: none; border-radius: 24px; margin-top:20px; width: 100%;">
-            <div>
-                <h1 style="font-size: 2.5rem; text-align: left; margin-bottom: 8px;">Trending Research</h1>
-                <p class="desc" style="text-align: left; margin-bottom: 0;">Discover the latest breakthroughs directly from Semantic Scholar.</p>
+        <div class="navbar">
+            <h2 class="logo">AI Research</h2>
+            <div class="nav-links">
+                <button id="hf-toggle" onclick="toggleHandsFree()" class="hf-btn off">Hands-Free: OFF</button>
+                <a href="/"><button>Home</button></a>
+                <a href="/study"><button>Study</button></a>
+                <a href="/papers"><button>Library</button></a>
+                <a href="/saved"><button>Saved</button></a>
+                <a href="/commands"><button>Commands</button></a>
+                <a href="/trending"><button class="active">Trending</button></a>
+                <a href="/ai-tutor"><button>Tutor</button></a>
+                <button id="gaze-toggle" onclick="toggleGaze()" class="hf-btn off gaze-btn">Gaze: OFF</button>
+            </div>
+            <div id="voice-status-container" class="voice-status-container">
+                <div id="voice-indicator" class="voice-indicator"></div>
+                <span id="voice-status-text" class="voice-status-text">OFFLINE</span>
             </div>
         </div>
 
-        <div class="category-tabs" style="margin-top: 30px;">
-            <button class="cat-btn active" onclick="loadTrending('AI', this)">AI</button>
-            <button class="cat-btn" onclick="loadTrending('Semiconductor', this)">Semiconductor</button>
-            <button class="cat-btn" onclick="loadTrending('Healthcare', this)">Healthcare</button>
-            <button class="cat-btn" onclick="loadTrending('Quantum Computing', this)">Quantum Computing</button>
-            <button class="cat-btn" onclick="loadTrending('Robotics', this)">Robotics</button>
-        </div>
+        <div class="main dashboard">
+            <div class="dashboard-header glass-card"
+                style="padding: 30px; box-shadow: none; border-radius: 24px; margin-top:20px; width: 100%;">
+                <div>
+                    <h1 style="font-size: 2.5rem; text-align: left; margin-bottom: 8px;">Trending Research</h1>
+                    <p class="desc" style="text-align: left; margin-bottom: 0;">Discover the latest breakthroughs
+                        directly from Semantic Scholar.</p>
+                </div>
+            </div>
 
-        <div id="trending-container" class="papers-grid" style="margin-top: 30px; width: 100%;">
-            <p>Select a category to load trending papers...</p>
+            <div class="category-tabs" style="margin-top: 30px;">
+                <button class="cat-btn active" onclick="loadTrending('AI', this)">AI</button>
+                <button class="cat-btn" onclick="loadTrending('Semiconductor', this)">Semiconductor</button>
+                <button class="cat-btn" onclick="loadTrending('Healthcare', this)">Healthcare</button>
+                <button class="cat-btn" onclick="loadTrending('Quantum Computing', this)">Quantum Computing</button>
+                <button class="cat-btn" onclick="loadTrending('Robotics', this)">Robotics</button>
+            </div>
+
+            <div id="trending-container" class="papers-grid" style="margin-top: 30px; width: 100%;">
+                <p>Select a category to load trending papers...</p>
+            </div>
         </div>
     </div>
-</div>
 
-<script src="/static/script.js"></script>
-<script src="/static/wave.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
-<script src="/static/gaze.js?v=6"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        // Load default category
-        loadTrending('AI', document.querySelector('.cat-btn.active'));
-    });
-</script>
+    <script src="/static/script.js?v=1775866520"></script>
+    <script src="/static/wave.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+    <script src="/static/gaze.js?v=6"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Load default category
+            loadTrending('AI', document.querySelector('.cat-btn.active'));
+        });
+    </script>
 </body>
+
 </html>
