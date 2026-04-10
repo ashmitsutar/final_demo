@@ -36,7 +36,7 @@ async function uploadPDF() {
 
         uploadBtn.innerText = "Loaded!";
         speakText("PDF loaded successfully.");
-        
+
         setTimeout(() => {
             uploadBtn.innerText = ogText;
             uploadBtn.disabled = false;
@@ -44,7 +44,7 @@ async function uploadPDF() {
 
         loadPDF(`/uploads/${uploadedFile}`);
 
-    } catch(err) {
+    } catch (err) {
         console.error("Upload error", err);
         uploadBtn.innerText = "Error";
         uploadBtn.disabled = false;
@@ -78,7 +78,7 @@ async function uploadFromLibrary() {
 
         speakText("Paper processed and added to repository.");
         loadRepositoryList();
-    } catch(err) {
+    } catch (err) {
         console.error("Library upload error", err);
         speakText("Sorry, there was an error uploading the paper.");
     }
@@ -170,31 +170,31 @@ function stopSpeech() {
 
 function speakText(text, btn) {
     if (!text) return;
-    
+
     // Strip all markdown symbols so TTS doesn't read **, ##, -- etc.
     const cleanText = stripMarkdown(text);
     if (!cleanText) return;
-    
+
     console.log("Browser TTS Speaking:", cleanText);
-    
+
     // Stop any existing speech
     stopSpeech();
-    
+
     if (btn) {
         btn.innerHTML = "⌛";
         currentSpeakingBtn = btn;
     }
 
     const utterance = new SpeechSynthesisUtterance(cleanText);
-    
+
     // Aesthetic settings for browser voice
     utterance.rate = 1.0;
     utterance.pitch = 1.0;
-    
+
     utterance.onstart = () => {
         if (btn) btn.innerHTML = "🛑";
     };
-    
+
     utterance.onend = () => {
         if (btn) btn.innerHTML = "🔊";
         currentSpeakingBtn = null;
@@ -216,7 +216,7 @@ function updateVoiceIndicator(state) {
     const container = document.getElementById("voice-status-container");
     const text = document.getElementById("voice-status-text");
     if (!ind || !container || !text) return;
-    
+
     // Set data-state attribute — CSS uses this for color
     ind.dataset.state = state;
     container.dataset.state = state;
@@ -395,9 +395,9 @@ async function loadRepositoryList() {
         // Advanced Accessibility - Ask to Read
         prepareListReading(data.papers, 'paper');
 
-    } catch(err) { 
+    } catch (err) {
         console.error(err);
-        grid.innerHTML = "Error loading repository"; 
+        grid.innerHTML = "Error loading repository";
     }
 }
 
@@ -437,9 +437,9 @@ async function loadDiscussions() {
         // Advanced Accessibility - Ask to Read
         prepareListReading(data.discussions, 'discussion');
 
-    } catch(err) { 
+    } catch (err) {
         console.error(err);
-        grid.innerHTML = "Error loading discussion history"; 
+        grid.innerHTML = "Error loading discussion history";
     }
 }
 
@@ -505,7 +505,7 @@ async function loadTrending(category, btn) {
 
         if (data.papers && data.papers.length > 0) {
             const seen = new Set();
-            
+
             data.papers.forEach(p => {
                 const key = p.url || p.title;
                 if (seen.has(key)) return;
@@ -537,9 +537,9 @@ async function loadTrending(category, btn) {
                 </div>
             `;
         }
-    } catch(err) { 
+    } catch (err) {
         console.error("Trending error:", err);
-        container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #ef4444;">Connection Error. Please ensure the local server is running.</p>`; 
+        container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #ef4444;">Connection Error. Please ensure the local server is running.</p>`;
     }
 }
 
@@ -562,7 +562,7 @@ function addMessage(text, type) {
 
     const div = document.createElement("div");
     div.className = "message " + type;
-    
+
     if (type === "ai") {
         div.innerHTML = marked.parse(text);
         const btn = document.createElement("button");
@@ -578,17 +578,17 @@ function addMessage(text, type) {
 }
 
 // -------- HANDS-FREE (BROWSER NATIVE STT) --------
-let isHandsFreeON      = localStorage.getItem("handsFree")       === "true";
+let isHandsFreeON = localStorage.getItem("handsFree") === "true";
 // isAlwaysListening: true  = mic restarts automatically after every result (great for blind users)
 //                   false = mic stops after result; user must press Shift+H or click to re-activate
-let isAlwaysListening  = localStorage.getItem("alwaysListening") !== "false"; // default ON
+let isAlwaysListening = localStorage.getItem("alwaysListening") !== "false"; // default ON
 let recognition = null;
-let micActive   = false; // tracks whether mic is currently running
+let micActive = false; // tracks whether mic is currently running
 
 function toggleHandsFree() {
     isHandsFreeON = !isHandsFreeON;
     localStorage.setItem("handsFree", isHandsFreeON);
-    
+
     // Only speak the activation message when the button is manually clicked (not on page load)
     if (isHandsFreeON) {
         speakText("Hands free mode activated.");
@@ -596,13 +596,13 @@ function toggleHandsFree() {
     } else {
         speakText("Hands free mode deactivated.");
     }
-    
+
     initHandsFreeUI();
 }
 
 function initHandsFreeUI() {
-    const btn    = document.getElementById("hf-toggle");
-    const alBtn  = document.getElementById("al-toggle");
+    const btn = document.getElementById("hf-toggle");
+    const alBtn = document.getElementById("al-toggle");
     if (btn) {
         if (isHandsFreeON) {
             btn.innerHTML = "Hands-Free: ON 🎙️";
@@ -613,8 +613,8 @@ function initHandsFreeUI() {
         }
     }
     if (alBtn) {
-        alBtn.innerHTML  = isAlwaysListening ? "👂 Always: ON" : "👂 Always: OFF";
-        alBtn.className  = isAlwaysListening ? "hf-btn on al-btn" : "hf-btn off al-btn";
+        alBtn.innerHTML = isAlwaysListening ? "👂 Always: ON" : "👂 Always: OFF";
+        alBtn.className = isAlwaysListening ? "hf-btn on al-btn" : "hf-btn off al-btn";
     }
 
     if (isHandsFreeON) {
@@ -644,9 +644,8 @@ function toggleAlwaysListening() {
 
 function stopListening() {
     micActive = false;
-    if (recognition) { try { recognition.stop(); } catch(e) {} }
+    if (recognition) { try { recognition.stop(); } catch (e) { } }
 }
-
 function startListening() {
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
         alert("Browser doesn't support Speech Recognition.");
@@ -654,53 +653,80 @@ function startListening() {
         initHandsFreeUI();
         return;
     }
-    if (micActive) return; // already running
+
+    if (micActive) return;
 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     recognition = new SpeechRecognition();
+
     recognition.continuous = true;
     recognition.interimResults = false;
     recognition.lang = 'en-US';
 
+    let lastSpeechTime = Date.now();
+
     recognition.onstart = () => {
         micActive = true;
         updateVoiceIndicator('listening');
-        console.log("STT started | alwaysListening:", isAlwaysListening);
+        console.log("STT started");
     };
 
     recognition.onresult = (event) => {
+        lastSpeechTime = Date.now(); // 🔥 track activity
+
         const transcript = event.results[event.results.length - 1][0].transcript.toLowerCase().trim();
         processOfflineCommand(transcript);
     };
 
-    recognition.onerror = (event) => {
-        console.error("STT error:", event.error);
-        if (event.error === 'no-speech' && micActive) updateVoiceIndicator('listening');
+    recognition.onerror = () => {
+        micActive = false;
     };
 
     recognition.onend = () => {
         micActive = false;
-        // Always-listening ON  → restart automatically
-        // Always-listening OFF → only restart if hands-free is on (one more listen cycle after command)
-        if (isAlwaysListening) {
-            // Blind mode: always restart regardless of hands-free state
-            try { micActive = false; startListening(); } catch(e) {}
-        } else if (isHandsFreeON) {
-            // Sighted mode: restart only while hands-free is toggled on
-            try { micActive = false; startListening(); } catch(e) {}
+
+        if (isHandsFreeON || isAlwaysListening) {
+            setTimeout(() => {
+                try { startListening(); } catch (e) { }
+            }, 500);
         } else {
             updateVoiceIndicator('off');
         }
     };
 
-    try { recognition.start(); } catch(e) {}
-}
+    try {
+        recognition.start();
+    } catch (e) {
+        setTimeout(() => startListening(), 1000);
+    }
 
+    // 🔥 CRITICAL: proactive reset every 10 sec
+    if (!window.forceRestartLoop) {
+        window.forceRestartLoop = setInterval(() => {
+            if (!(isHandsFreeON || isAlwaysListening)) return;
+
+            const now = Date.now();
+            const silenceTime = now - lastSpeechTime;
+
+            // 🔥 if silent OR running too long → reset
+            if (silenceTime > 10000) {
+                console.log("Force restarting due to silence...");
+
+                try { recognition.stop(); } catch (e) { }
+                micActive = false;
+
+                setTimeout(() => {
+                    try { startListening(); } catch (e) { }
+                }, 10000);
+            }
+        }, 15000);
+    }
+}
 async function processOfflineCommand(transcript) {
     console.log("Browser Transcript:", transcript);
     const wakeWords = ["assistant", "computer", "ai", "research"];
     let command = "";
-    
+
     // Check for wake words
     for (let w of wakeWords) {
         if (transcript.includes(w)) {
@@ -708,7 +734,7 @@ async function processOfflineCommand(transcript) {
             break;
         }
     }
-    
+
     if (!command) {
         updateVoiceIndicator('listening');
         return;
@@ -736,7 +762,7 @@ async function processOfflineCommand(transcript) {
     else if (command.includes("go to study")) navigateTo("/study", "Study");
     else if (command.includes("read all commands") || command.includes("special one")) navigateTo("/commands?autostart=true", "Commands Reference");
     else if (command.includes("go to command") || command.includes("brochure") || command.includes("what commands")) navigateTo("/commands", "Commands Reference");
-    
+
     // BLIND ASSISTANCE: WHERE AM I?
     else if (command.includes("where am i") || command.includes("what is here") || command.includes("what's here")) {
         const path = window.location.pathname;
@@ -751,7 +777,7 @@ async function processOfflineCommand(transcript) {
         else if (path === "/saved") info = "You are in the Repository. You have " + (currentPageList.length || "no") + " uploaded papers here.";
         else if (path === "/trending") info = "You are in the Trending section. latest search results are currently displayed.";
         else if (path === "/commands") info = "You are in the Commands Brochure. I can read all specific voice commands for you.";
-        
+
         speakText(info);
         updateVoiceIndicator('on');
     }
@@ -781,7 +807,7 @@ async function processOfflineCommand(transcript) {
                 const item = currentPageList[index];
                 const filename = typeof item === 'string' ? item : null;
                 const threadId = item.id ? item.id : null;
-                
+
                 if (filename) {
                     speakText(`Opening paper ${index + 1}.`);
                     setTimeout(() => window.location.href = `/study?file=${filename}`, 1200);
@@ -810,13 +836,13 @@ async function processOfflineCommand(transcript) {
     else if (command.includes("study") || command.includes("open this")) {
         // ... (existing study search logic stays same)
         let paper = command.replace("study", "").replace("open this", "").replace("in", "").trim();
-        
+
         if (!paper) {
             // Check if we are on a page with a list
             if (window.location.pathname === "/saved" || window.location.pathname === "/trending" || window.location.pathname === "/papers") {
-                 speakText("Please specify the title or the number of the paper you wish to study.");
-                 updateVoiceIndicator('listening');
-                 return;
+                speakText("Please specify the title or the number of the paper you wish to study.");
+                updateVoiceIndicator('listening');
+                return;
             }
             navigateTo("/study", "Study");
             return;
@@ -856,7 +882,7 @@ async function processOfflineCommand(transcript) {
             updateVoiceIndicator('listening');
         }
     }
-    
+
     // DEFAULT: Don't just send everything to chat unless it sounds like a question or prefix is used
     else {
         console.log("Ignored ambiguous command:", command);
@@ -895,26 +921,26 @@ document.addEventListener("DOMContentLoaded", () => {
     initHandsFreeUI();
     const userInput = document.getElementById("user-input");
     if (userInput) userInput.addEventListener("keypress", (e) => { if (e.key === "Enter") sendMessage(); });
-    
+
     const params = new URLSearchParams(window.location.search);
     const file = params.get('file');
     const thread = params.get('thread');
-    
+
     if (file) {
         fetch("/process_pdf", { method: "POST", body: new URLSearchParams({ filename: file }) })
-        .then(() => loadPDF(`/uploads/${file}`))
-        .catch(console.error);
+            .then(() => loadPDF(`/uploads/${file}`))
+            .catch(console.error);
     } else if (thread) {
         fetch(`/thread-info/${thread}`)
-        .then(res => res.json())
-        .then(data => {
-            if (data.paper_name && data.paper_name !== 'General Discussion') {
-                fetch("/process_pdf", { method: "POST", body: new URLSearchParams({ filename: data.paper_name }) })
-                .then(() => loadPDF(`/uploads/${data.paper_name}`))
-                .catch(console.error);
-            }
-        })
-        .catch(console.error);
+            .then(res => res.json())
+            .then(data => {
+                if (data.paper_name && data.paper_name !== 'General Discussion') {
+                    fetch("/process_pdf", { method: "POST", body: new URLSearchParams({ filename: data.paper_name }) })
+                        .then(() => loadPDF(`/uploads/${data.paper_name}`))
+                        .catch(console.error);
+                }
+            })
+            .catch(console.error);
     }
 
     if (window.location.pathname === "/trending") {
