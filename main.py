@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File, Form, Query
+from fastapi import FastAPI, UploadFile, File, Form, Query, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel
@@ -21,6 +21,14 @@ CONFIG_PATH = "D:/piper/voices/en_US-lessac-medium.onnx.json"
 ESPEAK_PATH = "D:/piper/espeak-ng-data"
 
 app = FastAPI()
+
+@app.middleware("http")
+async def add_no_cache_headers(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
 
 # -------- DB HELPERS -------- #
 import sqlite3
@@ -365,4 +373,4 @@ async def clear_context():
     """Wipes the loaded paper from memory so AI starts fresh with no document."""
     model.user_db = None
     model.last_paper_filename = "General Discussion"
-    return {"status": "cleared"}
+    return {"status": "cleared"}

@@ -77,11 +77,11 @@
 
 4.  **Launch Server**:
     ```bash
-    python -m uvicorn main:app --port 8000 --reload
+    python -m uvicorn main:app --port 9000 --reload
     ```
 
 5.  **Access the App**:
-    Open `http://localhost:8000` in your browser.
+    Open `http://localhost:9000` in your browser.
 
 ---
 

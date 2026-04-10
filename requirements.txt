@@ -1,0 +1,15 @@
+fastapi
+uvicorn
+requests
+pydantic
+faster-whisper
+langgraph
+langchain-openai
+python-dotenv
+langchain-community
+langchain-huggingface
+pymupdf
+faiss-cpu
+sentence-transformers
+python-multipart
+langchain-text-splitters
